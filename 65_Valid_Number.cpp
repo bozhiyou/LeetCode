@@ -1,4 +1,6 @@
-// WRONG
+/**
+ *Validate if a given string can be interpreted as a decimal number.
+ */
 class Solution {
 public:
     bool isNumber(string s) {
@@ -20,14 +22,14 @@ public:
             case '-':
                 if (++i == s.end())
                     return false;
-            // unsigned
-            default:
                 // first integral digit
                 if (*i == '.' && 0 == flag) {
                     i++; // "+.0" is valid
                     flag = 1;
                 }
-                else if (*i > '9' || *i < '0')
+            // unsigned
+            default:
+                if (*i > '9' || *i < '0')
                     return false;
                 if (++i == s.end())
                     return true;
@@ -51,25 +53,26 @@ public:
                 if (1 == flag) // "dot-dot (or e-dot, impossible here)"
                     return false;
                 flag = 1;
-            case 'e':
-                flag = (flag == 1? 1 : 2);
                 if (++i == s.end())
-                    return (1 == flag); // "0." is valid
-                if (2 == flag) {
-                    switch (*i) {
-                        case '+':
-                        case '-':
-                            if (++i == s.end())
-                                return false;
-                        default:
-                            break;
-                    }
+                    return true; // "0." is valid
+                break;
+            case 'e':
+                flag = 2;
+                if (++i == s.end())
+                    return false;
+                switch (*i) {
+                    case '+':
+                    case '-':
+                        if (++i == s.end())
+                            return false;
+                    default:
+                        break;
                 }
             // should not directly get here
             default:
                 // first decimal digit
-                if (*i > '9' || *i < '0')
-                    return (0 == flag);
+                if ((*i > '9' || *i < '0'))
+                    return false;
                 if (++i == s.end())
                     return true;
         }
@@ -94,7 +97,7 @@ public:
                     return false;
                 if (++i == s.end())
                     return false;
-                // now it's sci-number: sci = true
+                // now it's sci-number
                 switch (*i) {
                     case '+':
                     case '-':
@@ -124,3 +127,46 @@ public:
         return false;
     }
 };
+
+string stringToString(string input) {
+    assert(input.length() >= 2);
+    string result;
+    for (int i = 1; i < input.length() -1; i++) {
+        char currentChar = input[i];
+        if (input[i] == '\\') {
+            char nextChar = input[i+1];
+            switch (nextChar) {
+                case '\"': result.push_back('\"'); break;
+                case '/' : result.push_back('/'); break;
+                case '\\': result.push_back('\\'); break;
+                case 'b' : result.push_back('\b'); break;
+                case 'f' : result.push_back('\f'); break;
+                case 'r' : result.push_back('\r'); break;
+                case 'n' : result.push_back('\n'); break;
+                case 't' : result.push_back('\t'); break;
+                default: break;
+            }
+            i++;
+        } else {
+          result.push_back(currentChar);
+        }
+    }
+    return result;
+}
+
+string boolToString(bool input) {
+    return input ? "True" : "False";
+}
+
+int main() {
+    string line;
+    while (getline(cin, line)) {
+        string s = stringToString(line);
+        
+        bool ret = Solution().isNumber(s);
+
+        string out = boolToString(ret);
+        cout << out << endl;
+    }
+    return 0;
+}
