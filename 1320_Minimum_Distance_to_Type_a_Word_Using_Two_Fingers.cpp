@@ -210,12 +210,10 @@ public:
                 vector<uint8_t> index(word.begin(), word.end());
                 for (auto& i : index)
                     i -= 'A';
-                vector<uint8_t> taps({index[0], index[0], index[1], index[1]});
                 uint8_t c1, c2;
                 for (uint8_t dFingers = dist[index[0]][index[1]], i = 2;
                      dFingers < 9 && i < index.size();
                      i++) {
-                    ret = dFingers;
                     if (prefixSum[index[i]][dFingers] == 26)
                         continue;
                     for (auto j = prefixSum[index[i]][dFingers];
@@ -223,16 +221,16 @@ public:
                          j++) {
                         for (auto k = 0; k < i; k++) {
                             if (neighbors[index[i]][j] == index[k]) {
-                                if (i < k) { c1 = i; c2 = k; }
-                                else { c1 = k; c2 = i; }
+                                c1 = i; c2 = k;
                                 assert(dist[index[i]][index[k]] > dFingers);
                                 dFingers = dist[index[i]][index[k]];
                             }
                         }
                     }
                 }
+                vector<uint8_t> taps({index[c1], index[c1], index[c2], index[c2]});
                 for (auto i = 0; i < index.size(); i++) {
-                    if (i == c1 && i == c2)
+                    if (i == c1 || i == c2)
                         continue;
                     vector<uint8_t> dists({dist[index[i]][taps[0]], dist[index[i]][taps[1]],
                                   dist[index[i]][taps[2]], dist[index[i]][taps[3]]});
